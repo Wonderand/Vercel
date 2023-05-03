@@ -8,7 +8,7 @@ import { streamToBuffer } from '@vercel/build-utils';
 import primitives from '@edge-runtime/primitives'
 import exitHook from 'exit-hook';
 import fetch from 'node-fetch';
-import asyncListen from 'async-listen';
+import { listen } from 'async-listen';
 import { isAbsolute } from 'path';
 import { pathToFileURL } from 'url';
 import type { BuildDependencies } from '@edge-runtime/node-utils';
@@ -16,7 +16,6 @@ import type { ServerResponse, IncomingMessage } from 'http';
 import type { VercelProxyResponse } from '../types.js';
 import type { VercelRequest, VercelResponse } from './helpers.js';
 
-const { default: listen } = asyncListen;
 
 type ServerlessServerOptions = {
   shouldAddHelpers: boolean;
@@ -40,7 +39,7 @@ async function createServerlessServer(
     return userCode(req, res);
   });
   exitHook(() => server.close());
-  return { url: await listen(server) };
+  return { url: await listen(server).toString() };
 }
 
 async function compileUserCode(entrypointPath: string) {
